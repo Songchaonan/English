@@ -1,0 +1,44 @@
+\documentclass{article}
+\bibliographystyle{plain}
+\usepackage{cite}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage[left=1.25in,right=1.25in,top=1in,bottom=1in]{geometry}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\selectfont
+\title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document}
+\maketitle
+    \par Today I read only a part of this article and will continue reading later.
+    \par Rotation-Invariant face detection is to detecting faces with random RIP angles, is widely used in unconstrained applications but still a challenging task, due to large variations of face appearances.Practical application have the need to quickly and accurately detect the face of the input images. The CNN-based detectors enjoys the natural advantages of strong capability in non-linear feature learning. However, most works only consider for generic faces without considerations for specific scenarios. Detect faces in Figure 1 still a challenging task.
+        \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real1.jpg}
+            \caption{"Many complex situations need rotation-invariant face detectors. The face boxes are the outputs of our detector, and the blue line indicates the orientation of faces."}
+            \label{fig:1}
+        \end{figure}
+    \par There are three strategies for dealing with the rotation variations : data augmentation, divide-and-conquer,and rotation router.
+    \par \textbf{Data Augmentation} is very straightforward. A Rotation-invariant face detector is trained to rotate the upright face to different RIP angles to enhance the training data, as shown in Figure 2. This method can directly use the solution of the upright face detector. However, use single detector to characterize such large variations of face appearances usually needs to use neural networks with high time cost, which is not practical in many application.
+        \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real2.jpg}
+            \caption{"Data Augmentation"}
+            \label{fig:2}
+        \end{figure}
+    \par I think \textbf{Divide-and-Conquer} is upgrade of \textbf{Data Augmentation}.This method trains multiple detectors,each for a small range of RIP angles. As in [1], the four detectors cover the faces facing up,down,left,right,respectively. As shown in Figure 3, since one detector only handles a small range of facial appearance changes, it is sufficient to use a small neural network with a low time cost. However, running multiple detectors increases the overall time cost and easily introduces false alarms.
+        \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real3.jpg}
+            \caption{"Divide-and-Conquer"}
+            \label{fig:3}
+        \end{figure}
+\begin{thebibliography}{99}
+    \bibitem{pa}    C.Huang, H.Ai, Y.Li, and S.Lao. High-performance rotation invariant multiview face detection. IEEE Transactions on Pattern Analysis and Machine Intelligence(TPAMI), 29(4):671-686,2007.
+\end{thebibliography}
+\end{document}
