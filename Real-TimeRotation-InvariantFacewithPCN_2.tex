@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{cite}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage[left=1.25in,right=1.25in,top=1in,bottom=1in]{geometry}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\maketitle
+\par Today I continue reading this article, I will make a summary of the previous content, as show in Table. 1.We can see from the \ref{Table1}, The method of \textbf{Data Augmentation} have some disadvantages, it needs to use large neural networks with high time cost,which is not practical in many applications. Although The method of  \textbf{Divide-and-Conquer} trains multiple detectors and one detector only deals with a small range of face appearance variations, But the overall time cost grows and more false alarms are easily introduced.
+\begin{table}[H]
+  \centering
+   \begin{tabular}{|c|c|c|}
+     \hline
+     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+     strategy & Number of detector & Time cost  \\ \hline
+     Data Augmentation & 1 &  high \\ \hline
+     Divide-and-Conquer & many &one low but overall high  \\ \hline
+     Rotation Router & 1 & high  \\ \hline
+   \end{tabular}
+  \caption{Comparison of the three methods}\label{Table1}
+\end{table}
+\par Now I will express the another method \textbf{Rotation Router}. This method estimate the face's RIP angles accurately, and then rotate them to upright. In \cite{[18]}, a router network firstly estimate the RIP angle of each face, and then calibrate the face upright, as show in Figure \ref{fig:1}.After this step, an upright face detector can easily process the calibrated face candidates.However, once the RIP angle is incorrectly estimated, the detection efficiency will be reduced. To accurately estimate the RIP angle is very difficult, you must use a large time neural network as a route network, but doing so increases the time cost.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real4.jpg}
+            \caption{Estimate RIP angles with a route network and rotate face candidates to upright\cite{[18]}.}
+            \label{fig:1}
+\end{figure}
+\par This article propose a real-time and accurate rotation-invariant face detector with progressive calibration networks(PCN), as show in Figure \ref{fig:2}. PCN first identified the candidate's face.calibrates those facing down to facing up, reduced the RIP angle from [\ang{-180}, \ang{180}] to [\ang{-90}, \ang{90}]. Then calibrate the rotated face to an upright range of[\ang{-45}, \ang{45}], reducing the RIP angle by half again. Finally, PCN makes accurate decision for every candidate faces, and estimates precise RIP angle. PCN can use low time coat to detect rotating image by \ang{-90}, \ang{90}, and \ang{180}.PCN can accurately detect faces with full \ang{360} RIP angles.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real5.jpg}
+            \caption{An overview of our proposed progressive calibration networks (PCN) for rotation-invariant face detection. Our PCN progressively
+            calibrates the RIP orientation of each face candidate to upright for better distinguishing faces from non-faces. Specifically, PCN-1 first identifies face candidates and calibrates those facing down to facing up, halving the range of RIP angles from [\ang{180}, \ang{180}] to [\ang{90}, \ang{90}].Then the rotated face candidates are further distinguished and calibrated to an upright range of [\ang{45}, \ang{45}] in PCN-2, shrinking the RIP ranges by half again. Finally, PCN-3 makes the accurate final decision for each face candidate to determine whether it is a face and predict the precise RIP angle.}
+            \label{fig:2}
+\end{figure}
+\bibliography{1}
+\end{document}
