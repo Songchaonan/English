@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{cite}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage[left=1.25in,right=1.25in,top=1in,bottom=1in]{geometry}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document} 
+\bibliographystyle{plain}
+\maketitle 
+\par Today I continue reading this article,due to my limited knowledge, I can only understand some superficial meanings. The steps of PCN shows in Figure \ref{fig:2} The method proposed in this article has the following advantages:
+\par This method divide the calibration process into several progressive steps, each steps is an easy task, resulting accurate calibration with low time cost. And because the RIP range is gradually decrease, the distinguish between face and non-face become more easily.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real5.jpg}
+            \caption{An overview of our proposed progressive calibration networks (PCN) for rotation-invariant face detection. Our PCN progressively
+            calibrates the RIP orientation of each face candidate to upright for better distinguishing faces from non-faces. Specifically, PCN-1 first identifies face candidates and calibrates those facing down to facing up, halving the range of RIP angles from [\ang{180}, \ang{180}] to [\ang{90}, \ang{90}].Then the rotated face candidates are further distinguished and calibrated to an upright range of [\ang{45}, \ang{45}] in PCN-2, shrinking the RIP ranges by half again. Finally, PCN-3 makes the accurate final decision for each face candidate to determine whether it is a face and predict the precise RIP angle.}
+            \label{fig:2}
+\end{figure}
+\par In the first two steps of PCN, only processing coarse calibration, such us from facing down to facing up, from facing left to facing right. With no additional time cost, PCN can more easily implement reliable coarse calibration and accurate RIP angle prediction. And in the other hand ,the calibration can be easier to implement as flipping original image with quite low time cost.
+\par As evaluated on the face detection datasets including multi-oriented FDDB\cite{[10]} and a challenging subset of WIDER FACE \cite{[21]} containing rotated faces in the wild, the PCN detector achieves quite promising performance with extremely fast speed.
+\par To summarize the advantages, I made a table as follows£º
+\begin{table}[H]
+  \centering
+   \begin{tabular}{|c|c|c|}
+     \hline
+     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+     \multicolumn{3}{|c|}{The advantages of PCN} \\ \hline
+     Data Augmentation & 1 &  high \\ \hline
+     Time cost & The difficult of each task & The prediction of RIP angle \\ \hline
+     Each step and overall all low & easy & Accurate prediction with low time cost\\ \hline
+   \end{tabular}
+  \caption{Comparison of the three methods}\label{Table1}
+\end{table}
+\bibliography{1}
+\end{document}
