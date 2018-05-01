@@ -1,0 +1,79 @@
+\documentclass{article}
+\usepackage{flushend,cuted}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage[left=1.25in,right=1.25in,top=1in,bottom=1in]{geometry}
+\setlength{\parindent}{2em}
+\title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\maketitle
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real5.jpg}
+            \caption{An overview of our proposed progressive calibration networks (PCN) for rotation-invariant face detection. Our PCN progressively
+            calibrates the RIP orientation of each face candidate to upright for better distinguishing faces from non-faces. Specifically, PCN-1 first identifies face candidates and calibrates those facing down to facing up, halving the range of RIP angles from [\ang{180}, \ang{180}] to [\ang{90}, \ang{90}].Then the rotated face candidates are further distinguished and calibrated to an upright range of [\ang{45}, \ang{45}] in PCN-2, shrinking the RIP ranges by half again. Finally, PCN-3 makes the accurate final decision for each face candidate to determine whether it is a face and predict the precise RIP angle.}
+            \label{fig:1}
+\end{figure}
+\begin{multicols}{2}
+Starting today I will introduce PCN specific implementation method.
+\section{Progressive Calibration Networks (PCN)}
+\subsection{Overall Framework}
+The proposed PCN detector is diagrammed in Figure~\ref{fig:1}. Given a picture, candidate faces are obtained by sliding window principles and image pyramid principles. Each candidate window passes through the detector in stages.At each stage of the PCN, the detector deletes the face with a low face recognition degree while regressing the bounding box of the remaining candidate faces, and calibration the RIP angle of each candidate faces. After each step, the detector use NMS merge the faces that have highly overlapped face as most existing methods do.
+\subsection{PCN-1 in $1^{st}$ stage}
+There are three goals for each input window $x$ in PCN-1: face or non-face classification, bounding box regression,
+and calibration, formulated as follows:
+\begin{equation}
+[f,t,g]=F_{1}(x), \tag{1}
+\end{equation}
+where $F_{1}$ is the detector of the first stage structured with a small CNN. The $f$ is face confidence score, $t$ is a vector represent the predict of bounding box regression, and $g$ is orientation score.\\
+The first objective aims for distinguishing faces from non-faces with softmax loss as follows:
+ \begin{equation}
+L_{cls}=y\log f + (1-y)\log (1-f), \tag{2}
+\end{equation}
+where $y$ equals 1 if $x$ is face, otherwise is 0.
+\par The second objective aims to regressing accurate bounding box, as blow:
+ \begin{equation}
+L_{reg}(t,t^*)=S(t-t^*), \tag{3}
+\end{equation}
+where $t$ and $t^*$ represents the results of predicted and ground-truth regression respectively, $S$ is the robust smooth $l_{1}$ loss define in \cite{[5]}. The bounding box regression consist of three terms:
+\begin{equation}
+\begin{aligned}
+    t_{w} &= w^* / w, \\
+    t_{a} &= (a^* + 0.5w^* -a -0.5w) / w^*, \\
+    t_{b} &= (b^* + 0.5w^* - b - 0.5w) / w^*, \\
+\end{aligned} \tag{4}
+\end{equation}
+where $a$, $b$ and $w$ denote the box's top-left coordinate and width. $a$ and $a^*$ for the box and ground-truth box respectively.
+\par The third objective aims to predict the coarse orientation of the face candidate in a binary classification manner as follows:
+\begin{equation}
+    L_{cal} = y \log g + (1-y) \log (1-g),\tag{5}
+\end{equation}
+where $y$ equals 1 if $x$ is facing up, and equals 0 if facing down.
+\par Overall the objective of PCN-1 in the first stage is defined as:
+\begin{equation}
+\min_{F_{1}}L = L_{cls} + \lambda_{reg} \cdot L_{reg} + \lambda_{cal} \cdot L_{cal},\tag{6}\label{6}
+\end{equation}
+where $\lambda_{reg}$, $\lambda_{cal}$ are parameters to balance different loss.
+\par After optimizing Eq~\eqref{6}, the PCN-1 can be used to filter all windows to get a small number of face candidates.The remaining candidate faces are first updated to the new bounding box of PCN-1 regression, and then the updated candidate face is rotated according to the roughly predicted RIP angle. The predicted RIP angle in first stage i.e. $\theta_{1}$ can be calculated by:
+\begin{equation}
+    \theta_{1} = \begin{cases} \ang{0}, &g\ge0.5\\
+                                \ang{180},&g<0.5 \end{cases} \tag{7}
+\end{equation}
+Specifically, $\theta = 0^\circ$ means that the face candidate is facing up and does not need to rotate, and $\theta = 180^\circ$ means that the face candidate is inverted and needs to be rotated facing up. As a result, the range of RIP angle decreased from [\ang{-180},\ang{180}] to [\ang{-90}, \ang{90}].
+\par During training phase, three kinds of data are employed: positive samples, negative samples, and suspected samples. positive samples are those windows with IoU over 0.7; negative samples are those windows with IoU lower than 0.3; suspected samples are those windows with IoU between 0.4 and 0.7. For positive
+and suspected samples, if their RIP angles are in the range of [\ang{-65}, \ang{65}], we define them as facing up, and if in [\ang{-180}, \ang{-115}]$\cup$[\ang{115}, \ang{180}], we define them as facing down. Samples with RIP angles outside of the above range do not contribute to calibration training.
+down.
+\end{multicols}
+\newpage
+\bibliography{1}
+\end{document}
