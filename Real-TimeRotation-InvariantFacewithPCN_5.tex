@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage{flushend,cuted}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage[left=1.25in,right=1.25in,top=1in,bottom=1in]{geometry}
+\setlength{\parindent}{2em}
+\title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\maketitle
+To summarize the contents of the previous section, I made a table as follows£º
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\begin{table}[H]
+  \centering
+   \begin{tabular}{|c|c|c|}
+     \hline
+     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+
+     PCN & PCN-1 in $1^{st}$ stage \\ \hline
+     Objective 1 & Face or non-face classification:  aims for distinguishing  faces from non-faces  with softmax loss \\ \hline
+     Objective 2 & Bounding box regression: attempts to regress the  fine bounding box \\
+     \hline
+     \tabincell{c}{Objective 3} & \tabincell{c}{calibration: aims to  predict the coarse orientation of the face \\ candidate in abinary classification manner} \\
+     \hline
+   \end{tabular}
+  \caption{PCN-1 in $1^{st}$ stage}\label{Table1}
+\end{table}
+\begin{multicols}{2}
+\section{Progressive Calibration Networks (PCN)}
+\subsection{PCN-2 in $2^{nd}$ stage}
+Similar to PCN-1, PCN-2 in second stage will more accurately distinguish between face and non-face, regressing the bounding box, and calibration the face candidates. The different between them is the coarse orientation in PCN-2 is a ternary classification of the RIP angle range, i.e. [\ang{-90}, \ang{-45}], [\ang{-45}, \ang{45}], [\ang{45},\ang{90}]. Rotation calibration is conducted with the predicted RIP angle in the second stage:
+\begin{equation}
+\begin{aligned}
+    id = \arg\max_{i} g_i, \\
+    \theta_{2} = \begin{cases}
+    \ang{-90}, & id = 0\\
+    \ang{180}, & id = 1\\
+    \ang{90},  & id = 2\\  \end{cases}
+\end{aligned}\tag{8}
+\end{equation}
+where g0, g1, and g2 are the predicted ternary orientation classification scores. Accordingly ,the face candidates are rotate in \ang{-90}, \ang{0}, \ang{90}. After the second stage, the RIP angle are decreased from [\ang{-90}, \ang{90}] to [\ang{-45}, \ang{45}]. In the training phase of second stage, The original image rotates uniformly within [\ang{-90}, \ang{90}] and filter the negative samples that via the training of PCN-1. Than in order to calibration the positive samples, negative samples and suspected samples are called 0, 1, 2, respectively. The samples those RIP angle over this range above are not contribute to the calibration.
+\subsection{PCN-3 in $2^{rd}$ stage}
+After the second stage, the RIP angle of all face candidates are calibrate to the range [\ang{-45}, \ang{45}]. In the third stage PCN is as easy to detect human faces as most existing face detectors, and returns to the bounding box. Because the RIP angle in the previous phase has been reduced to a very small range, PCN-3 can return to the exact RIP direction, rather than rough. In the end, the RIP angle of face candidates i.e. $\theta_{RIP}$ can be obtained by accumulating the angles of all stages as below:
+\begin{equation}
+    \theta_{RIP} = \theta_1 + \theta_2 +\theta_3 \tag{9}
+\end{equation}
+There are some examples of calculating the RIP angle, show in Figure \ref{fig:1}. The RIP angle regression is in a
+coarse-to-fine cascade regression style like \cite{[3],[22]}.
+\end{multicols}
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Real6.jpg}
+            \caption{Figure 4. The RIP angle is predicted in a coarse-to-fine cascade regression style. The RIP angle of a face candidate, i.e. $\theta{RIP}$ , is obtained as the sum of predicted RIP angles from three stages, i.e. $\theta_{RIP} = \theta_1 + \theta_2 + \theta_3$. Particularly, $\theta_1$ only has two values, \ang{0} or \ang{180}, $\theta_2$ only has three values, \ang{0}, \ang{90} or \ang{-90}, and $\theta_3$ is a continuous value in the range of [\ang{45}, \ang{45}].}
+            \label{fig:1}
+\end{figure}
+\newpage
+\bibliography{1}
+\end{document}
