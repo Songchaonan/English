@@ -1,0 +1,35 @@
+\documentclass[twocolumn]{article}
+\usepackage{flushend,cuted}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\setlength{\parindent}{2em} \title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\onecolumn
+\maketitle
+\begin{multicols}{2}
+\section{Experiments}
+In the following part, I will describe the implementation of PCN. Then, In order to better evaluate the effectiveness of PCN and analyze PCN's accuracy and calculation speed in depth, they use the world's most challenging two data sets: FDDB and WIDER FACE.
+\subsection{Implementation Details}
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Real7.jpg}
+            \caption{The detailed CNN structures of three stages in our proposed PCN method. ¡°Conv¡±, ¡°MP¡±, ¡°InnerProduct¡±, and ¡°ReLU¡± mean convolution layer, max pooling layer, inner product layer, and relu layer, respectively. (k $ \times $k, s) represents that the kernel size is k and the stride is s.}
+            \label{fig:1}
+\end{figure}
+Their network architecture is shown in Figure~\ref{fig:1}. The PCN consists of three CNNs from largest to smallest. They use the WIDER FACE training set for training, they adjusted  the noted faces to squares. The network is optimized by back-propagating Stochastic Gradient Descent (SGD) with a maximum iteration setting of $10^5$. They adopt the ¡°step¡± strategy in Caffe~\cite{[11]} to adjust learning rate. The learning rate for the first iteration was $7 \times 10^4$ and then revised to $10^{-3}$, then reduced to $10^{-4}$ again. Weight Decay is set to $5 \times 10^{-4}$ and Momentum Decay is set to 0.9. All layers are initialized using a Gaussian distribution with a standard deviation of 0.01 in order to achieve stable convergence. In each small branch, the proportion of positive, negative, and suspect samples is approximately 2:2:1. The experiments run on desktop computer that have 3.4GHz CPU and GTX Titan X GPU.
+\subsection{Methods for Comparison}
+They compared the three methods mentioned earlier. 1) \emph{Data Augmentation}: Training with data augmentation Advanced detection data models including Faster R-CNN~\cite{[17]}, RFCN~\cite{[2]}, and SSD500~\cite{[14]}, randomly rotating training images throughout the full range of [\ang{-180}, \ang{180}]. They use base networks is  VGG16 ~\cite{[19]},VGGM ~\cite{[1]}, and ResNet-50 ~\cite{[6]}. They also use the same networks as their PCN to implement cascade CNN ~\cite{[13]} face detector, and training with Data Augmentation. 2) \emph{Divide-and-Conquer}: They implemented an upright face detector based on cascade CNN and run this detector four times on images rotated to \ang{0}, \ang{90}, \ang{-90}, and \ang{180} to form a rotational invariant face detector. 3) \emph{Rotation Router} ~\cite{[18]} is implemented for comparison, in which the router network first estimates the orientation of faces in the range of up, down, left, right and rotate it to upright respectively. The routing network of \emph{Rotation Router} shares the same structure as the PCN uses WIDER FACE for training and adjusts the annotation surface to square.
+\end{multicols}
+\bibliography{1}
+\end{document}
