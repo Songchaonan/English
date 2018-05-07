@@ -1,0 +1,83 @@
+\documentclass[twocolumn]{article}
+\usepackage{flushend,cuted}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\setlength{\parindent}{2em} \title{Real-Time Rotation-Invariant Face Detection with Progressive Calibration Networks}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\onecolumn
+\maketitle
+\begin{multicols}{2}
+\section{Experiments}
+\subsection{Benchmark Datasets}
+Multi-Oriented FDDB ~\cite{[10]} include 5,171 labeled faces, those faces collected from 2,845 news headlines. FDDB is challenging in some means that the performance of faces have great changes in view, skin color, facial expression, illumination, occlusion, resolution, etc. However, most faces are upright because it collected from news headlines. In order to better evaluate the performance of Rotation-Invariant detector, FDDB faces are rotate in \ang{-90}, \ang{90}, \ang{180} respectively, forming a multi-oriented version of FDDB.In this task, initial FDDB are called FDDB-up, and others are called FDDB-left, FDDB-light, FDDB-down according to their rotated angles. In order to evaluate the performance of Rotation-Invariant comprehensively, detectors are evaluated respectively on multi-oriented FDDB. They use official evaluation tools to obtain the ROC curves. They ignore the RIP angle of detection box, and simply use horizontal boxes for evaluation. Rotation WIDER FACE ~\cite{[21]} include faces have high level in scale, pose and
+occlusion. They manual select some images that contain rotation faces from WIDER FACE to obtain a rotation subset with 370 images and 987 rotation flat, as shown in Figure ~\ref{fig:10}. Due to WIDER FACE test sets do not provide the ground-truth faces, they manually annotate the faces in this subset following the WIDER FACE annotation rules.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Real10.jpg}
+            \caption{Our PCN¡¯s detection results on rotation WIDER FACE}
+            \label{fig:10}
+\end{figure}
+\subsection{Evaluation Results}
+\subsubsection{Results of Rotation Calibration}
+For their PCN, the direction classification for the first and second phase are 95\% and 96\% respectively. The third stage calibration error is \ang{8}. In ~\cite{[18]}, The orientation classification accuracy of router network is 90\%, which shows that their progressive calibration mechanism can achieve better orientation classification accuracy.  The mean error of the router network in continuous angle regression manner  is quite large, due to the fine regression task is too challenging, as shown in Figure ~\ref{fig:7}.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Real8.jpg}
+            \caption{Histogram of angular error in the router network (in degrees)}
+            \label{fig:7}
+\end{figure}
+\subsubsection{Results on Multi-Oriented FDDB}
+They evaluate the rotation-invariant face detectors mentioned above in terms of ROC curves on multi-oriented FDDB, shown in Figure~\ref{fig:8}. As the picture shows, Their PCN performed well, defeating all other methods, and the performance of the PCN far outperformed the cascaded CNN with little extra time cost, thanks to a robust and accurate coarse-to-fine calibration process.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Real9.jpg}
+            \caption{Histogram of angular error in the router network (in degrees)}
+            \label{fig:8}
+\end{figure}
+\subsubsection{Results on Rotation WIDER FACE}
+Moreover, their PCN are compared with the existing methods on the more challenging rotation WIDER FACE, as shown in Figure ~\ref{fig:9}. their PCN achieves quite promising performance, which demonstrates the effectiveness of PCN. Some detection results can be viewed Figure ~\ref{fig:10}.
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Real11.jpg}
+            \caption{Histogram of angular error in the router network (in degrees)}
+            \label{fig:9}
+\end{figure}
+\subsubsection{Speed and Accuracy Comparison}
+Their PCN aims at accurate rotation-invariant face detection with low time cost. They compare PCN¡¯s speed with other rotation-invariant face detector¡¯s on standard 640 $\times$ 480 VGA images with 40 $\times$ 40 minimum face size with low time cost. The speed results and the recall rate at 100 false positives on multi-oriented FDDB are shown in Table ~\ref{Table 1}. As can be seen, their PCN can run with almost the same speed as Cascade CNN, and PCN runs much faster than Faster R-CNN (VGG16), SSD500(VGG16), and R-FCN (ResNet-50) with better detection accuracy, demonstrating the their PCN are best in both accuracy and speed.
+\end{multicols}
+\onecolumn
+\begin{table}
+\begin{tabular}{l|ccccc|cc|c}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  \multirow{2}{*}{Method} & \multicolumn{5}{|c|}{Recall rate at 100 FP on FDDB} &\multicolumn{2}{|c|}{Speed} & \multirow{2}{*}{Model Size} \\ \cline{2-8}
+   & Up & Down & Left & Right & Ave & CPU & GPU &  \\ \hline
+  Divide-and-Conquer & 85.5 & 85.2 & 85.5 & 85.6 & 85.5 & 15FPS & 20FPS & 2.2M \\
+  Rotation Router~\cite{[18]} & 85.4 & 84.7 & 84.6 & 84.5 & 84.8 & 12FPS & 15FPS & 2.5M \\
+  Cascade CNN ~\cite{[13]} & 85.0 & 84.2 & 84.7 & 85.8 & 84.9 & 31FPS & 67FPS & 4.2M \\
+  Cascade CNN ~\cite{[13]} + STN ~\cite{[9]} & 85.8 & 85.0 & 84.9 & 86.2 & 85.5 & 16FPS & 30FPS & 4.7M \\
+  SSD500 ~\cite{[14]} (VGG16) & 86.3 & 86.5 & 85.5 & 86.1 & 86.1 & 1FPS & 20FPS & 95M \\
+  Faster R-CNN ~\cite{[17]} (VGGM) & 84.2 & 82.5 & 81.9 & 82.1 & 82.7 & 1FPS & 20FPS & 350M \\
+  Faster R-CNN ~\cite{[17]} (VGG16) & 87.0 & 86.5 & 85.2 & 86.1 & 86.2 & 0.5FPS & 10FPS & 547M \\
+  R-FCN ~\cite{[2]} (ResNet-50) & 87.1 & 86.6 & 85.9 & 86.0 & 86.4 & 0.8FPS & 15FPS & 123M \\ \hline
+  PCN (ours) & 87.8 & 87.5 & 87.1 & 87.3 & 87.4 & 29FPS & 63FPS & 4.2M \\
+  \hline
+\end{tabular}
+\caption{Speed and accuracy comparison between different methods. The FDDB recall rate (\%) is at 100 false positives} \label{Table1}
+\end{table}
+\bibliography{1}
+\end{document}
