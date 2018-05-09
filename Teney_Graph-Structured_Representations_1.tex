@@ -1,0 +1,37 @@
+\documentclass[twocolumn]{article}
+\usepackage{flushend,cuted}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\setlength{\parindent}{2em}
+\title{Graph-Structured Representations for Visual Question Answering}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\onecolumn
+\maketitle
+\begin{multicols}{2}
+\section{Abstract}
+This article proposes to improve the visual question answer (VQA) by using a structured representation of scene content and problems. One of the difficulties with VQA is the requirement for joint reasoning in the visual and text areas. The dominant VQA approach based on CNN / LSTM is largely constrained by the overall vector representation and largely ignores the structure in the scenario and problem. The CNN feature vector cannot effectively capture the context, while the LSTM treats the problem as a series of words, which cannot truly reflect the structure of the language. They propose to create graphs on scene objects and problem words and describe a deep neural network with structures in these representations. They found that this method has made significant progress over the existing technology.
+\section{Introduction}
+The task of Visual Question Answering has received increasing attention
+in recent years see, for example \cite{[4],[17]}. One aspect of the problem is the combination of computer vision, natural language processing and artificial intelligence. The text as a natural language together with the image provides the problem, and the correct answer must be predicted. In multiple choice variants, one answer is selected from a set of candidate answers provided to alleviate the problems associated with synonyms and paraphrases. Some data sets of VQA have introduced real \cite{[4],[14],[17],[21],[31]} or composite images \cite{[4],[30]} Their experiments use "cartoon" images based on clip art or human creation to describe realistic scenes. Their experiments focused on editing this dataset of the art scene because they allowed to focus on semantic reasoning and visual language interaction (see the example in Figure ~\ref{fig5}). They also allow the processing of image data to better illustrate algorithm performance. In \cite{[30]}, the opposite answer is elicited by selecting only questions with binary answers, and each (synthetic) image with a minimally complementary version. This is very different from the VQA data set of other real images, in that the correct answer is usually obvious and does not require viewing the image by relying on the systematic laws of common questions and answers \cite{[4],[30]}. In their view, despite the obvious limitations of composite images, improvements to the above-mentioned "balanced" data set constitute heuristic measures of the progress of the scene understanding, because the language model itself does not perform as well as these data.
+\par \textbf{Challenges} The problem of clip data sets varies greatly in complexity. Some can answered directly by observing visual elements. Other question need to involve multiple many infants or understand complex behavior. The other challenge impact all data sets of VQA is the Sparse of training data. Even a large number of training problem can not cover the diversity of possible objects and concepts. 
+\end{multicols}
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Graph5.jpg}
+            \caption{Qualitative results on the ¡°abstract scenes¡± dataset (top row) and on ¡°balanced¡± pairs (middle and bottom row). We show the input scene, the  question, the predicted answer, and the correct answer when the prediction is erroneous. We also visualize the matrices of matching weights (Eq. 6, brighter correspond to higher values) between question words (vertically) and scene objects (horizontally). The matching weights are also visualized over objects in the scene, after summation over words, giving an indication of their estimated relevance. The ground truth object labels are for reference only, and not used for training or inference.}
+            \label{fig5}
+\end{figure}
+\bibliography{Graph-Structured}
+\end{document}
