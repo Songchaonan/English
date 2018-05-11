@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{flushend,cuted}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\setlength{\parindent}{2em}
+\title{Graph-Structured Representations for Visual Question Answering}
+\author{Chaonan Song}
+\begin{document}
+\bibliographystyle{plain}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\maketitle
+
+\begin{multicols}{2}
+\section{Introduction}
+\textbf{Language representation:} Because of the above reasons, they use the extensive existing work in the natural language community to help solve problems. First, they use the reader to identify the grammatical structure of the problem \cite{[7]}. This produces a graphical representation where each node represents a word and each side represents a specific type. Then they associate each word (node) with a vector pre-trained on a large text data set \cite{[20]}. This association maps words to semantically meaningful spaces. So, this basically regulates the rest of the network to share learning concepts in related words and synonyms. This is helpful for dealing with rare words, and allows problems including lack of words in training questions/answers. It should be noted that this pre-training and temporary processing of the language part imitates the exercises commonly used in the image part, where the visual features are usually obtained from a fixed CNN, which itself is pre-trained on a larger data set and has different goals.
+\par \textbf{Scene representation:} Each object in the scene corresponds to a node in the scene graph that has associated feature vectors that describe its appearance. The graphics are fully connected, with each edge representing the relative position of the object in the image.
+\par
+\textbf{Applying Neural Networks to graphs:} The advantage of this method of using text and scene graphs without using typical representations is that graphs can capture relationships between words and objects with semantic importance. This enables GNN to exploit (1) the disordered nature of the scene (especially the object) and (2) the semantic relationship between the elements. This is in contrast to the method of using CNN to represent the image and the processing word to continuously process the problem using RNN (though the grammatical structure is very non-linear). The graph representation ignores the order in which elements are processed, but instead represents the relationships
+between different elements using different edge types. Their network uses multi-level iterations to traverse features associated with each node, ultimately identifying soft matches between nodes in the two graphs. This match reflects the correspondence between the words in the question and the objects in the image. The characteristics of the matching node are fed into the classifier to infer the answer to the problem (Figure \ref{fig:1}).
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Graph1.jpg}
+            \caption{We encode the input scene as a graph representing the objects and their spatial arrangement, and the input question as a graph representing words and their syntactic dependencies.}
+            \label{fig:1}
+\end{figure}
+The main contributions of this paper are shown in Table \ref{Table1}.
+\end{multicols}
+\begin{table}[H]
+ \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  \multicolumn{4}{|c|}{Recall rate at 100 FP on FDDB} \\ \hline
+  \tabincell{c}{They describe \\ how to use \\ graph representations \\ of scene \\ and question for VQA.} & \tabincell{c}{They showed \\ how to use \\ off-the-shelf language \\ parsing tools \\ to generate \\ graphical representations \\ of grammatical \\ relationships.} & \tabincell{c}{They trained \\ the proposed \\ model on the VQA \\ ¡°abstract scene¡± \\ benchmark \cite{[4]} and \\ improved accuracy\\  and accuracy.} &  \tabincell{c}{They assessed the \\ uncertainty \\ in the model by \\ first presenting \\ the VQA task-predicted \\ answer  precision \\  memory curve.} \\
+  \hline
+\end{tabular}
+\caption{Contribution of this article}
+\label{Table1}
+\end{table}
+\bibliography{Graph-Structured}
+\end{document}
