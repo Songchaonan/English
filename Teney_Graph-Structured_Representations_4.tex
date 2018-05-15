@@ -1,0 +1,66 @@
+\documentclass[twocolumn]{article}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{flushend,cuted}
+\usepackage{float}
+\usepackage{flushend,cuted}
+\usepackage{multirow}
+\usepackage{siunitx}
+\setlength{\parindent}{2em}
+\author{Chaonan Song}
+\title{Graph representation of scenes and questions}
+\begin{document}
+\bibliographystyle{plain}
+        \maketitle
+        \par
+        \section{Related work}
+        The input data for each training or test instance is a problem and is a parametric description of the scene content. The question is processed with the Stanford dependency parser \cite{[7]}, which outputs the following.
+        \begin{itemize}
+               \item  A set of $N^Q$ words that constitute the nodes of the question graph. Each word is represented by its index in the input vocabulary, a token$ x^Q_i \in \mathbb{Z} (i \in 1 \dots N^Q)$.
+               \item A set of pairwise relations between words, which constitute the edges of our graph. An edge between words i and j is represented by $e^Q_{ij} \in \mathbb{Z}$, an index among the possible types of dependencies.
+        \end{itemize}
+        The dataset provides the following information about the image
+        \begin{itemize}
+                \item A set of NS objects that constitute the nodes of the scene graph. Each node is represented by a vector $x^S_i \in \mathbb{R}^C$ of visual features ($i \in 1 \dots N^S$). Please refer to the supplementary material for implementation details.
+                \item A set of pairwise relations between all objects. They form the edges of a fully-connected graph of the scene. The edge between objects i and j is represented by a vector $e^S_{ij} \in \mathbb{R}^D $that encodes relative spatial relationships (see supp. mat.).
+        \end{itemize}
+        Their experiments were performed on the clip art scene data set, where scene descriptions were provided as a list of objects. This method also applies to real images where the object list is replaced by the candidate object.
+        \par The features of all nodes and edges are projected to a vector space RH of common dimension (typically H=300). The question nodes and edges use vector embeddings implemented as look-up tables, and the scene nodes and edges use affine projections:
+                \begin{align}
+                x^{'Q}_i & = W_1[x^{Q}_i] & e^{'Q}_{ij} & = W_2[e^{Q}_{ij}] \\
+                x^{'s}_i & = W_3x^{'s}_i + b_3 & e^{'s}_{ij}& = W_4e^{'s}_i + b_4
+                \end{align}
+        with W1 the word embedding (usually pretrained, see supplementary material), $W_2$ the embedding of dependencies, $W_3 \in \mathbb{R}^h{\times c} $ and $W_4 \in \mathbb{R}^{h¡Ád}$ weight matrices, and $b_3 \in \mathbb{R}^c $ and $b4 \in \mathbb{R}^d$ biases.
+        \section{Processing graphs with neural networks}
+        They describe a deep neural network that is suitable for processing problems and scene graphs to infer the answer. See Fig.~\ref{fig2} The two graphics that represent the problem and the scene are handled independently. They have discarded the indices S and Q of this paragraph, because both figures apply the same procedure. Each node $x_i$ is associated with a gated recurrent unit (GRU [6]) and processed over a fixed number T of iterations (typically T=4):
+                \begin{align}
+                h^{0}_{i} & =0 \\
+                n_{i} & =pool_{j}(e^{'}_{ij} o x^{'}_{j}) \\
+                h^{t}_{i} & =GRU(h^{t-1}_i , [x^{'}_{i} ; n_{i}]) \qquad t \in [1, T].
+                \end{align}
+        
+\begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Graph2.jpg}
+            \caption{Architecture of the proposed neural network. The input is provided as a description of the scene (a list of objects with their visual characteristics) and a parsed question (words with their syntactic relations). The scene-graph contains a node with a feature vector for each object, and edge features that represent their spatial relationships. The question-graph reflects the parse tree of the question, with a
+            word embedding for each node, and a vector embedding of types of syntactic dependencies for edges. A recurrent unit (GRU) is associated with each node of both graphs. Over multiple iterations, the GRU updates a representation of each node that integrates context from its neighbours within the graph. Features of all objects and all words are combined (concatenated) pairwise, and they are weighted with a form of attention. That effectively matches elements between the question and the scene. The weighted sum of features is passed through a final classifier that predicts scores over a fixed set of candidate answers.}
+            \label{fig2}
+\end{figure}
+            The final state of the GRU is used as the new representation of the nodes: $x^{¡ä¡ä}_{i} = h^T_i$. Pool operations convert features from a variable number of nodes into a fixed-size representation. Any commutative operation can be used (\emph{e.g.} sum, maximum). In their implementation, they discovered the best performance through the average function and considered the average of the number of variable connections. Their formula is similar to the gated graph network \cite{[15]} but slightly different because the information dissemination in their model is limited to the first order. Note that their graphs are typically densely connected. In fact, they estimate the relevance of pairwise combinations of each possible word and object. More precisely, we compute scalar ¡°matching weights¡± between node sets ${x^{'Q}_{i}}$ and ${x^{'s}_{i}}$ (\emph{e.g.} \cite{[16]}) Therefore, $ \forall i \in 1 \dots N^Q, j\in 1 \dots N^s$ :
+                \begin{equation}[H]
+                a_{ij} = \sigma (W_{5}(\frac{x^{'Q}_{i}}{\|x^{'Q}_{i}\|} \circ \frac{x^{'S}_{j}}{\|x^{'S}_{j}\|}) + b_5)
+                \end{equation}
+            where $W_5 \in \mathbb{R}^{1¡Áh} and b_5 \in \mathbb{R} $are learned weights and biases,and $\sigma$ the logistic function that introduces a nonlinearity and bounds the weights to (0, 1). They apply the scalar weights $a_{ij}$ to the corresponding pairing combinations of problem and scene features, thereby focusing and placing greater emphasis on matching pairs (Eq. \ref{7} ). We sum the weighted features over the scene elements (Eq. \ref{8}) then over the question elements (Eq. \ref{9}), interleaving the sums with affine projections and non-linearities to obtain a final prediction:
+            \begin{align}
+                y_{ij} &= a_{ij} \cdot [x^{''Q}_{i}; x^{''S}_{j}] \label{7} \\
+                y^{'}_{i} & =f(W_{6}\sum_{j}^{N^S} \qquad y_{ij} + b_6) \label{8} \\
+                y^{''} & =f'(w_{7}\sum_{i}^{N^Q} \qquad y_{i}^{'} + b_7)\label{9}
+            \end{align}
+\bibliography{Graph-Structured}
+\end{document}
