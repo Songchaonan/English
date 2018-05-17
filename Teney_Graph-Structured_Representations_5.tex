@@ -1,0 +1,65 @@
+\documentclass[twocolumn]{article}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{flushend,cuted}
+\usepackage{float}
+\usepackage{flushend,cuted}
+\usepackage{multirow}
+\usepackage{siunitx}
+\setlength{\parindent}{2em}
+\author{Chaonan Song}
+\title{Graph representation of scenes and questions}
+\begin{document}
+\bibliographystyle{plain}
+        \maketitle
+        \par
+        \section{Evaluation}
+        \textbf{Datasets} Their evaluation use two datasets the original °∞abstract scenes°± from Antol \emph{et al.} \cite{[4]} and its "balanced" extension from \cite{[30]}. They all contain scenes created by humans for arranging clip art objects and graphics. The original dataset contains 20k/10k/20k scenes and 60k/30k/60k questions, each with 10 human provided ground-truth answers. Questions are categorized based on the type of the correct answer into \emph{yes/no} \emph{number},and \emph{other}, But all categories use the same method to test for unknown problems. The "balanced" version of the dataset contains only the subset of questions which have binary \emph{yes/no} answers and, In addition, create complementary scenarios to elicit the opposite answer for each question. A pair of complementary scenes differs because only one or two objects are moved, removed or modified (see examples in Fig.~\ref{fig5}, bottom rows). This makes the problem very challenging because of the need to take into account the subtle details of the scene.
+        \begin{figure*}
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Graph5.jpg}
+            \caption{Qualitative results on the °∞abstract scenes°± dataset (top row) and on °∞balanced°± pairs (middle and bottom row). We show the input scene, the question, the predicted answer, and the correct answer when the prediction is erroneous. We also visualize the matrices of matching weights (Eq. 6, brighter correspond to higher values) between question words (vertically) and scene objects (horizontally). The matching weights are also visualized over objects in the scene, after summation over words, giving an indication of their estimated relevance. The ground truth object labels are for reference only, and not used for training or inference.}
+            \label{fig5}
+        \end{figure*}
+        \par
+        \textbf{Metrics} The main indicator is the average "VQA score" \cite{[4]}, taking into account the variability of answers from multiple human annotators.
+        \par
+        \textbf{ground truth score} $s(q, a)=1.0$ if the answer a was provided by $m \geq 3$ annotators. Otherwise, $s(q, a)= m/3$ Their method outputs a predicted score $\mathbf{s} (q, a)$ for each question and answer and the overall accuracy is the average ground truth score of the highest prediction per question, \emph{i.e.} $\frac{1}{M} \sum_{q}^{M} s\left (q, \arg \max_{a} \mathbf{s} (q, a)\right)$.
+        \par
+        Their initial experiments confirmed that the performances of various algorithms on the balanced dataset were indeed better separated, and we used it for our ablative analysis. They also focus on the hardest evaluation setting \cite{[30]}, which measures the accuracy over pairs of complementary scenes. This is the only indicator of zero precision based on the guesswork. This setting also does not consider pairs of test scenes that are considered fuzzy due to inconsistencies between commentators. The metric is then a standard °∞hard°± accuracy, \emph{i.e.} all ground truth scores $s(i, j) \in \{0, 1\}$.
+        \subsection{Evaluation on the "balanced" dataset}
+        They compare their method against the three models proposed in \cite{[30]}. The visual features in the three models are empty, global, or focused on two objects identified from the problem. These models are designed specifically for binary problems, and their models usually apply. Nevertheless, they obtain significantly better accuracy than all three (Table. \ref{Table1}). The difference in performance is mainly seen in the "pair" setting, which they believe is more reliable because it discards the fuzzing issue of the commenter disagreeing.
+        \begin{table*}
+            \centering
+            \begin{tabular}{l c l}
+                & Avg. score & Avg. accuracy \\
+            Method & over scenes & over pairs \\ \hline
+            Zhang \emph{et al.} \cite{[30]} blind & 63.33 & 0.00 \\
+            with global image features & 71.03 & 23.13 \\
+            with attention-based image features & 74.65 & 34.73 \\ \hline
+            \textbf{Graph VQA}(full model) & \textbf{74.94} & \textbf{39.1} \\
+            \multicolumn{2}{l}{(1) Question: no parsing (graph with previous/next edges)} & 37.9 \\
+            \multicolumn{2}{l}{(2) Question: word embedding not pretrained} & 33.8 \\
+            \multicolumn{2}{l}{(3) Scene: no edge features ($e^{°‰S}_{ij}=1$)} & 36.8 \\
+            \multicolumn{2}{l}{(4) Graph processing: disabled for question ($x^{°‰°‰Q}_{i} =x^{°‰S}_{i}$)} & 37.1 \\
+            \multicolumn{2}{l}{(5) Graph processing: disabled for scene ($x^{°‰°‰S}_{i} =x^{°‰Q}_{i} $)} & 37.0 \\
+            \multicolumn{2}{l}{(6) Graph processing: disabled for question/scene} & 35.7 \\
+            \multicolumn{2}{l}{(7) Graph processing: only 1 iteration for question ($T^Q=1$)} & 39.7 \\
+            \multicolumn{2}{l}{(8) Graph processing: only 1 iteration for scene ($T^S=1$)} & 37.9 \\
+            \multicolumn{2}{l}{(9) Graph processing: only 1 iteration for question/scene} & 39.1 \\
+            \multicolumn{2}{l}{(10) Uniform matching weights ($a_{ij}=1$)} & 39.1 \\
+            % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+
+            \hline
+            \end{tabular}
+            \caption{Results on the test set of the "balanced" dataset \cite{[30]} (in percents , using balanced versions of both training and test sets). Numbered rows report accuracy over pairs of complementary scenes for ablated versions of our method.}
+            \label{Table1}
+        \end{table*}
+\bibliography{Graph-Structured}
+\end{document}
