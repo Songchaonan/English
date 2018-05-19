@@ -1,0 +1,91 @@
+\documentclass[twocolumn]{article}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{flushend,cuted}
+\usepackage{float}
+\usepackage{flushend,cuted}
+\usepackage{multirow}
+\usepackage{siunitx}
+\setlength{\parindent}{2em}
+\author{Chaonan Song}
+\title{Graph representation of scenes and questions}
+\begin{document}
+
+        \maketitle
+        \par
+        \section{Evaluation}
+        \subsection{Evaluation on the "balanced" dataset}
+        During training, They take care to keep pairs of complementary scenes together when forming mini-batches. This has a significant positive effect on the stability of the optimization. They did not notice any tendency toward overfitting when training on balanced scenes. They hypothesize that the pairs of complementary scenes have a strong regularizing effect that force the learned model to focus on relevant details of the scenes. In Fig. \ref{fig5} (and in the supplementary material), they visualize the matching weights between question words and scene objects (Eq. \ref{6}). As expected, these tend to be larger between semantically related elements (\emph{e.g.} daytime$\leftrightarrow$sun, dog$\leftrightarrow$puppy, boy$\leftrightarrow$human) although some are more difficult to interpret. Our best performance of about 39\% is still low in absolute terms, which is understandable from the wide range of concepts involved in the questions (see examples in Fig. \ref{fig5} and in the supplementary material). It seems unlikely that these concepts could be learned from training question/answers alone, and they suggest that any further significant improvement in performance will require external sources of information at training and/or test time.
+        \begin{equation}[H]
+                a_{ij} = \sigma (W_{5}(\frac{x^{'Q}_{i}}{\|x^{'Q}_{i}\|} \circ \frac{x^{'S}_{j}}{\|x^{'S}_{j}\|}) + b_5) \label{6}
+        \end{equation}
+        \par
+        \textbf{Ablative evaluation} They evaluated variants of Their model to measure the impact of various design choices (see numbered rows in Table \ref{Table1}). On the question side, they evaluate (row 1) their graph approach without syntactic parsing, building question graphs with only two types of edges, \emph{previous/next} and linking consecutive nodes. This shows the advantage of using the graph method and syntactic parsing. The optimization starts from scratch (row 2) because starting from the pre-trained Glove vector \cite{[20]} results in a significant decrease in performance. On the scene side, they removed the edge features (row 3) by setting $e_{ij}^{S} = 1$ It confirms the spatial relationship between the model's edge-coded objects. In rows 4®C6, they disabled the recurrent graph processing ($x^{°‰°‰}_i = x^°‰_i$) for the either the question, the scene, or both. They finally tested the model with uniform matching weights ($a_{ij} = 1$, row 10). It performed badly. Their weights are similar to those in other models (\emph{e.g.} \cite{[31],[27],[5],[12],[28]}), and their observations confirm that these mechanisms are critical to good performance.
+        \par
+        \textbf{Precision/recall}  They are interested in assessing the confidence of their model in its predicted answers. Most existing VQA methods treat the answer as a hard classification of the candidate answer, and almost all reported results consist of a single accuracy metric. To provide more insight, they produce \emph{precision/recall} curves for predicted answers. A precision/recall point $(p, r)$ is obtained by setting a thresh-old t on predicted scores such that
+        \par
+         \begin{equation}
+                p = \frac{\sum_{i,j} 1 \left(\mathbf{S}(i,j) > t \right) s(i, j)} {\sum_{i,j} 1 \left (\mathbf{S}(i,j) > t \right)} \label{10} 
+         \end{equation}
+         \begin{equation}
+                r = \frac{\sum_{i,j} 1 \left(\mathbf{S}(i,j) > t \right) s(i, j)} {\sum_{i,j}}  \label{11}
+         \end{equation} 
+         where 1($\bullet$) is the 0/1 indicator function. They plot precision/ recall curves in Fig. 3 for both datasets2. The predicted score proves to be a reliable indicator of the model confidence, as a low threshold can achieve near-perfect accuracy (Fig. \ref{fig3}, left and middle) by filtering out harder and/or ambiguous test cases.
+         \par
+         \textbf{Effect of training set size} They trained our model with limited subsets of the training data (see Fig. \ref{fig4}). Unsurprisingly, the performance grows steadily with the amount of training data, which suggests that larger datasets would improve performance. Their use of parsing and word embeddings is a small step in that direction. Both techniques clearly improve generalization(Fig. \ref{fig4}). 
+         \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Graph4.jpg}
+            \caption{Impact of the amount of training data on performance(accuracy over pairs on the °∞balanced°± dataset). Language preprocessing always improve generalization: pre-parsing and pretrained word embeddings both have a positive impact individually, and their effects are complementary to each other.}
+            \label{fig4}
+        \end{figure}
+        \begin{figure*}
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Graph5.jpg}
+            \caption{Qualitative results on the °∞abstract scenes°± dataset (top row) and on °∞balanced°± pairs (middle and bottom row). We show the input scene, the question, the predicted answer, and the correct answer when the prediction is erroneous. We also visualize the matrices of matching weights (Eq. 6, brighter correspond to higher values) between question words (vertically) and scene objects (horizontally). The matching weights are also visualized over objects in the scene, after summation over words, giving an indication of their estimated relevance. The ground truth object labels are for reference only, and not used for training or inference.}
+            \label{fig5}
+        \end{figure*}
+        \begin{table*}
+            \centering
+            \begin{tabular}{l c l}
+                & Avg. score & Avg. accuracy \\
+            Method & over scenes & over pairs \\ \hline
+            Zhang \emph{et al.} \cite{[30]} blind & 63.33 & 0.00 \\
+            with global image features & 71.03 & 23.13 \\
+            with attention-based image features & 74.65 & 34.73 \\ \hline
+            \textbf{Graph VQA}(full model) & \textbf{74.94} & \textbf{39.1} \\
+            \multicolumn{2}{l}{(1) Question: no parsing (graph with previous/next edges)} & 37.9 \\
+            \multicolumn{2}{l}{(2) Question: word embedding not pretrained} & 33.8 \\
+            \multicolumn{2}{l}{(3) Scene: no edge features ($e^{°‰S}_{ij}=1$)} & 36.8 \\
+            \multicolumn{2}{l}{(4) Graph processing: disabled for question ($x^{°‰°‰Q}_{i} =x^{°‰S}_{i}$)} & 37.1 \\
+            \multicolumn{2}{l}{(5) Graph processing: disabled for scene ($x^{°‰°‰S}_{i} =x^{°‰Q}_{i} $)} & 37.0 \\
+            \multicolumn{2}{l}{(6) Graph processing: disabled for question/scene} & 35.7 \\
+            \multicolumn{2}{l}{(7) Graph processing: only 1 iteration for question ($T^Q=1$)} & 39.7 \\
+            \multicolumn{2}{l}{(8) Graph processing: only 1 iteration for scene ($T^S=1$)} & 37.9 \\
+            \multicolumn{2}{l}{(9) Graph processing: only 1 iteration for question/scene} & 39.1 \\
+            \multicolumn{2}{l}{(10) Uniform matching weights ($a_{ij}=1$)} & 39.1 \\
+            % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+
+            \hline
+            \end{tabular}
+            \caption{Results on the test set of the "balanced" dataset \cite{[30]} (in percents , using balanced versions of both training and test sets). Numbered rows report accuracy over pairs of complementary scenes for ablated versions of our method.}
+            \label{Table1}
+        \end{table*}
+        \begin{figure*}
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.8\textwidth]{Graph3.jpg}
+            \caption{Precision/recall on the "abstract scenes" (left: multiple choice, middle: open-ended) and °∞balanced°± datasets (right). The scores assigned by the model to predicted answers is a reliable measure of its certainty: a strict threshold (low recall) filters out incorrect answers and produces a very high precision. On the "abstract scenes" dataset (left and middle), a slight advantage is brought by training for soft target scores that capture ambiguities in the human-provided ground truth.}
+            \label{fig3}
+        \end{figure*}
+         
+\bibliographystyle{plain}
+\bibliography{Graph-Structured}
+\end{document}
