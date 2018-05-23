@@ -1,0 +1,55 @@
+\documentclass[twocolumn]{article}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{flushend,cuted}
+\usepackage{float}
+\usepackage{flushend,cuted}
+\usepackage{multirow}
+\usepackage{siunitx}
+\setlength{\parindent}{2em}
+\author{Chaonan Song}
+\title{3D Face Morphable Models "In-the-Wild"}
+\begin{document}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+        \maketitle
+        \par
+        \section{Introduction}
+        In the past few years, we have witnessed major improvements in various face analysis tasks, such as face detection~\cite{[19],[42]} and 2D facial landmark location on still images~\cite{[40],[21],[6],[38],[43],[4]}. This is mainly due to the fact that the community has made considerable efforts to collect and annotate facial images taken under unconstrained conditions~\cite{[24],[45],[9],[32],[31]}(usually called "in the wild"). And how to determine the availability of such a large amount of data. However, due to the lack of ground truth data, the technology cannot be used for "field" 3D facial shape estimation. The 3D facial shape estimation from a single image has attracted the attention of many researchers in the past two decades. The two main lines of research are (\emph{i}) fitting a 3D Morphable Model (3DMM)~\cite{[11],[12]} and (\emph{ii}) applying Shape from Shading (SfS) techniques~\cite{[34],[35],[22]}. The 3DMM fitting proposed in the work of Blancz and Vetter ~\cite{[11],[12]} is the first model-based 3D facial restoration method. This method requires the construction of a 3DMM, which is a statistical model of facial textures and shapes in an explicitly corresponding space. The first 3DMM was constructed using 200 faces captured under good control conditions and showed only neutral expressions. This is why the method can only be used in the real world, not the "wild" image.
+        \par
+        Recovering 3D facial shapes from a single image under "field" conditions remains an open and challenging issue in computer vision. Reasons such as Table~\ref{Table1}.In particular, their contributions are in Table~\ref{Table2}
+        \par
+        The rest of the structure in this article is as follows. In Section 2, the proposed "field" 3DMM construction is described in detail. In Section 3, the proposed optimization of fitting "field" images with their models is outlined. Part 4 describes their new data set. They outlined a series of quantitative and qualitative experiments in Section 5, and finally concluded in Section 6.
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|l|l|}
+            \hline
+            Reason 1 & \tabincell{l}{The general problem of extracting \\ the 3D facial shape  from a single image \\ is an ill-posed problem} \\ \hline
+            Reason 2 & \tabincell{l}{Even with modern acquisition \\ equipment, it is very  difficult to learn \\ statistical priors of 3D \\ facial shapes and textures for "field" images.}\\
+
+            \hline
+            \end{tabular}
+            \caption{Recovering a 3D facial shape from a single image is the cause of the difficulty.}
+            \label{Table1}
+        \end{table}
+
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|l|l|}
+            \hline
+            Contribution 1 & \tabincell{l}{They proposed a method of learning \\ from "wild" facial images, which is \\ exactly the same as the previous \\ statistics  showing the changes in \\ identity and expression.} \\ \hline
+            Contribution 2 & \tabincell{l}{They propose a novel and fast \\ algorithm  for fitting "field" 3DMMs.}\\ \hline
+            Contribution 3 & \tabincell{l}{They used Kinect Fusion~\cite{[18],[28]} \\ to collect a new 3D facial dataset} \\
+            \hline
+            \end{tabular}
+            \caption{The contribution of this paper}
+            \label{Table2}
+        \end{table}
+\clearpage
+\bibliographystyle{plain}
+\bibliography{Booth}
+\end{document}
