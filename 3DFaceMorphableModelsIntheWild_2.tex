@@ -1,0 +1,89 @@
+\documentclass[twocolumn]{article}
+\usepackage{indentfirst}
+\setlength{\parindent}{2em}
+\usepackage{picinpar,graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{flushend,cuted}
+\usepackage{float}
+\usepackage{flushend,cuted}
+\usepackage{multirow}
+\usepackage{siunitx}
+\author{Chaonan Song}
+\title{3D Face Morphable Models "In-the-Wild"}
+\begin{document}
+        \maketitle
+        \section{Model Training}
+        In this paper, they make a number of contributions that enable the use of 3DMMs for``in-the-wild'' face reconstruction
+        (Fig.~\ref{fig1}).
+        \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Booth1.jpg}
+            \caption{Our ``in-the-wild'' Morphable Model is capable of recovering accurate 3D facial shape for a wide 
+            variety of images.}
+            \label{fig1}
+\end{figure}
+        A 3DMM consists of three parametric models: the \emph{shape}, \emph{camera} and \emph{texture} models.
+        \subsection{Shape Model}
+        They denote the 3D mesh (shape) of an object with N vertexes as a $3N \times 1$ vector show in Eq.~\ref{eq1}.
+        \begin{equation}
+        s = \left[
+        X_{1}^{T}, \dots, X_{N}^{T} \right] = \left[x_1, y_1, z_1, \dots, x_N, y_N, z_N \right]
+        \label{eq1}
+        \end{equation}
+        where $xi = \left[x_i, y_i, z_i\right]^T$ are the object-centered Cartesian coordinates of the \emph{i}-th vertex. This model can be used to generate novel 3D shape instances using the function $\mathcal{S}: \mathbb{R}^{n_s} \to \mathbb{R}^{3N}$ as Eq.~\ref{eq2}.
+        \begin{equation}
+        \mathcal{S}(P) = \hat{\mathbf{s}} + U_{s}P
+        \label{eq2}
+        \end{equation}
+        where $p = \left[p_1,\dots , p_{n_s} \right]^T$ are the $n_s$ shape parameters.
+        \subsection{Camera Model}
+        The purpose of the camera model is to map (project) Cartesian coordinates centered on the object of the 3D mesh to 2D Cartesian coordinates on the image plane. In this work, they used a pinhole camera model that uses a perspective transformation.
+        \par
+        \textbf{Perspective projection}. The projection of a 3D point into its 2D location include two steps. First, the 3D point is rotated and translated using a linear view transformation, under the assumption that the camera is still as Eq.~\ref{eq3}
+        \begin{equation}
+        \left[v_x, v_y, v_z \right]^{T} = \mathbf{R}_{v}\mathtt{X} + \mathbf{t}_v
+        \label{eq3}
+        \end{equation}
+        where $\mathbf{R}_{v} \in \mathbb{R}^{3 \times 3}$ are the 3D rotation and translation components, respectively. Then, a nonlinear \emph{perspective} transformation is applied as Eq.~\ref{eq4}
+        \begin{equation}
+        X^{'}= \frac{\mathit{f}}{v_z} \begin{bmatrix} v_x \\ v_y \end{bmatrix} + \begin{bmatrix} c_x \\ c_y \end{bmatrix}
+        \label{eq4}
+        \end{equation}
+        where $\mathcal{f}$ is the focal length in pixel units (they assume that the $x$ and $y$ components of the focal length are equal) and $\left[c_x, c_y \right]^{T}$ is the principal point that is set to the image center.
+        \par
+        \textbf{Camera function.} The projection operation performed by the camera model of the 3DMM can be expressed with the function $\mathcal{P} (s, c): \mathbb{R}^{3N} \to \mathbb{R}^{2N}$ which applies the transformations of Eqs.~\ref{eq3} and~\ref{eq4} on the points of provided 3D mesh $s$ with Eq.~\ref{eq6}
+        \begin{equation}
+        \mathbf{c} = \left[\mathit{f}, q_1, q_2, q_3, t_x, t_y, t_z\right]^{T}
+        \label{eq6}
+        \end{equation}
+        being the vector of camera parameters with length $n_c = 7$. For abbreviation purposes, we represent the camera model of the 3DMM with the function $ \mathcal{W}: \mathbb{R}^{n_s, n_c} \to \mathbb{R}^{2N} $ as Eq.~\ref{eq7}.
+        \begin{equation}
+        \mathcal{W} \left(\mathbf{p}, \mathbf{c}\right) \equiv \mathcal{P} \left(\mathcal{S}(\mathbf{p}), c \right)
+        \label{eq7}
+        \end{equation}
+        where $\mathcal{S}(\mathbf{p})$ is a 3D mesh instance using Eq.~\ref{eq2}.
+        \subsection{``In-the-Wild''Feature-Based Texture Model}
+        The generation of an ``in-the-wild''texture model is a key component of the proposed 3DMM. To this end, we take advantage of the existing large facial ``in-the-wild''databases that are annotated in terms of sparse landmarks. They also define a dense feature extraction function as Eq.~\ref{eq8}.
+        \begin{equation}
+        \mathcal{F}: \mathbb{R}^{H \times W} \to \mathbb{R}^{H \times W \times C}
+        \label{eq8}
+        \end{equation}
+        where $C$ is the number of channels of the feature-based image.For each image, they first compute its feature-based
+        representation as $\mathbf{F}_i = \mathcal{F}(\mathbf{I}_i)$ and then use Eq.~\ref{eq7}. to sample
+        it at each vertex location to build back a vectorized texture sample
+        $ \mathbf{t}_i = \mathbf{F}_i \left(\mathcal{W}(\mathbf{p_i, c_i})\right) \in \mathbb{R}^{CN}$. This texture sample
+        will be nonsensical for some regions mainly due to self-occlusions present in the mesh projected in the image 
+        space$\mathcal{W}(\mathbf{p_i, c_i}).$ Finally, an iterative procedure can be used to refine the texture. That is,
+        starting with the 3D fits provided by using only the 2D landmarks~\cite{[20]},a texture model can be learned using 
+        the above procedure. This texture model used with the proposed 3DMM fitting algorithm on the same data 
+        establishes improved correspondences, refining the texture model.
+        
+\clearpage
+\bibliographystyle{plain}
+\bibliography{Booth}
+\end{document}
