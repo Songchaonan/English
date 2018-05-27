@@ -1,0 +1,89 @@
+\documentclass[twocolumn]{article}
+\bibliographystyle{IEEEtran}
+\usepackage{indentfirst}
+\usepackage{picinpar,graphicx}
+\usepackage{cite}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+
+\usepackage[pagebackref=true,colorlinks,linkcolor=red,citecolor=green]{hyperref}
+
+\setlength{\parindent}{2em}
+
+\author{Chaonan Song}
+\title{3D Face Morphable Models ``In-the-Wild''}
+
+\begin{document}
+	\maketitle
+	\par
+	\section{Model Fitting}
+	Professor James propose to fit the 3DMM on an input image using a Gauss-Newton iterative optimisation. To this end, herein, James first formulate the cost function and then present two optimisation procedures.
+	\subsection{Cost Function}
+    The overall cost function of the proposed 3DMM formulation consists of a texture-based term, an optional error
+term based on sparse 2D landmarks, and an optional regularisation terms on the parameters. 
+\par
+    \textbf{Texture reconstruction cost.} The main term of the optimisation problem is the one that aims to estimate the shape, texture and camera parameters that minimise the $\mathcal{L}^{2}_{2}$ norm of the difference between the image feature-based texture that corresponds to the projected 2D locations of the 3D shape instance and the texture instance of the 3DMM.
+    \par
+    \textbf{Regularisation.} In order to avoid over-fitting effects, James augment the cost function with two optional regularisation terms over the shape and texture parameters. James formulate the regularisation terms as the $\mathcal{L}^{2}_{2}$ of the parameters¡¯ vectors weighted with the corresponding inverse eigenvalues.
+    \par
+    \textbf{Overall cost function.} The landmarks term as well as the regularisation terms are optional and aim to guide the optimisation procedure to converge faster and to a better minimum. Note that thanks to the proposed ``in-the-wild'' feature-based texture model, the cost function does not include any parametric illumination model similar to the ones in the relative literature Blanz and Volker~\cite{[11]}, Blanz \emph{et al.}~\cite{[12]}, which greatly simplifies the optimisation.
+    \subsection{Gauss-Newton Optimisation}
+    Inspired by the extensive literature in Lucas-Kanade 2D image alignment Baker \emph{et al.}~\cite{[7]} we formulate a Gauss-Newton optimisation framework. Specifically, given that the camera projection model is applied on the image part of Eq.~\ref{eq14}, the proposed optimisation has a ``forward'' nature.
+    \begin{equation}
+    \begin{split}
+    \arg \min_{p,c,\lambda} \parallel F\left( \mathcal{W}(p,c)\right) - \mathcal{T}(\lambda) \parallel^2 \\
+    +c_l \parallel \mathcal{W}_l(p,c) - s_l \parallel^2 + c_s \parallel P \parallel^2 + c_t \parallel \lambda \parallel^2
+    \label{eq14}
+    \end{split}
+    \end{equation}
+    \section{KF-ITW Dataset}
+    For the evaluation of the 3DMM, James have constructed KF-ITW, the first dataset of 3D faces captured under relatively unconstrained conditions. The dataset consists of 17 different subjects recorded under various illumination conditions performing a range of expressions (neutral, happy, surprise). James employed the KinectFusion~\cite{[18],[28]} framework to acquire a 3D representation of the subjects with a Kinect v1 sensor.
+    \par
+    The fused mesh for each subject serves as a 3D face ground-truth in which we can evaluate our algorithm and compare it to other methods. A voxel grid of size $608^3$ was utilised to get the detailed 3D scans of the faces. In order to accurately reconstruct the entire surface of the faces, a circular motion scanning pattern was carried out. Each subject was instructed to stay still in a fixed pose during the entire scanning process. The frame rate for every subject was constant to 8 frames per second.
+    \section{Experiments}
+    \subsection{3D Shape Recovery}
+    James use the ground-truth annotations provided in the KFITW dataset to initialize and fit all three techniques to the ``in-the-wild'' style images in the dataset. Our error metric is the per-vertex dense error between the recovered shape and the model-specific corresponded ground-truth fit, normalized by the inter-ocular distance for the test mesh. Fig.~\ref{fig4} shows the cumulative error distribution for this experiment for the three models under test.
+    \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Booth4.jpg}
+            \caption{Accuracy results for facial shape estimation on KF-ITW database. The results are presented as Cumulative Error Distributions of the normalized dense vertex error. Table~\ref{Table1} reports additional measures.}
+            \label{fig4}
+\end{figure}
+    Table~\ref{Table1} reports the corresponding Area Under the Curve (AUC) and failure rates.
+     \begin{table}[H]
+            \centering
+            \begin{tabular}{|l|l l|}
+            \hline
+            \emph{Method} & \emph{AUC} & \emph{Failure Rate (\%)} \\
+            \hline
+            \hline
+            \textbf{ITW} & \textbf{0.678} & \textbf{1.79}\\
+            Linear & 0.615 & 4.02 \\
+            Classic & 0.531 & 13.9 \\
+            \hline
+
+            \end{tabular}
+            \caption{Accuracy results for facial shape estimation on KF-ITW database. The table reports the Area Under the Curve (AUC) and Failure Rate of the Cumulative Error Distributions of Fig.~\ref{fig4}.}
+            \label{Table1}
+        \end{table}
+        \par
+        Figure~\ref{fig6} demonstrates qualitative results on a wide range of fits of ``in-the-wild'' images drawn from the Helen and 300W datasets that qualitatively highlight the effectiveness of the proposed technique.
+        \begin{figure}[H]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Booth6.jpg}
+            \caption{Examples of in the wild fits of our ITW 3DMM taken from 300W~\cite{[31]}}
+            \label{fig6}
+        \end{figure}
+        \section{Conclusion}
+        Professor James capitalise on the annotated ``in-the-wild'' facial databases to propose a methodology for learning an ``in-the-wild'' feature-based texture model suitable for 3DMM fitting without having to optimise for illumination parameters.
+
+    
+
+\bibliography{Booth}
+\end{document}
+
