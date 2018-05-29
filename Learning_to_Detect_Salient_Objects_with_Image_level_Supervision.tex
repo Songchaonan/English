@@ -1,0 +1,58 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fontspec}
+\usepackage{times}
+\setmainfont{Times New Roman}
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+\cvprfinalcopy
+\def\cvprPaperID{****}
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+\setcounter{page}{1}
+\author{Chaonan Song \\\\
+May 29, 2018}
+\title{Learning to Detect Salient Objects with Image-level Supervision} 
+\begin{document}
+    \maketitle
+    \begin{abstract}
+	   Today, I read a thesis written by Professor Wang, Learning to Detect Salient Objects with Image-level Supervision. In this paper, Dr. Wang and his team leverage the observation that image-level tags provide important cues of foreground salient objects, and develop a weakly supervised learning method for saliency detection using image-level tags only. In the first stage of our training method, a global smoothing pool was proposed to enable the FCN to assign object class labels to the corresponding object areas, and the FIN could use the predicted saliency map to paste all potential foreground areas. In the second phase, an iterative conditional random field was developed to enhance the consistency of spatial tags and further improve performance. Their proposed approach eases the workload of annotations and allows the use of existing large training sets with image-level tags.
+    \end{abstract}
+    \section{Introduction}
+    Recently, more and more teams are training DNNs using samples with accurate pixel-level annotations for significance testing Li and Yu~\cite{[26]}. Compared with the unsupervised method Kong \emph{et al.}~\cite{[22]}, DNNs learned from comprehensive supervision can more effectively capture semantically prominent foreground areas and produce accurate results in complex scenarios. DNN's superior performance depends heavily on a large number of data sets and pixel-level annotations. However, the annotation work is very tedious, and the training set with accurate annotation is still scarce and expensive. To alleviate the need for large-scale pixel annotations, Dr. Wang's team explored the weak supervision of image-level tags to train saliency detectors. Image-level tags indicate the presence or absence of object categories in the image and are easier to collect than pixel-wise annotations. The task of predicting image-level labels focuses on the object class in the image and is not responsible for the target location (Figure~\ref{fig1} left), whereas the significance test aims to highlight the full expansion of foreground objects and ignore their categories (Figure~\ref{fig1} right). The two tasks seem conceptually different but have inherent connections. The contributions of their team are shown in Table~\ref{Table1}.
+    
+     \begin{figure}[htbp]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{Salient1.jpg}
+            \caption{Image-level tags (left panel) provide informative cues of dominant objects, which tend to be the salient foreground. We propose to use image-level tags as weak supervision to learn to predict pixel-level saliency maps (right panel).}
+            \label{fig1}
+\end{figure}
+\begin{table}[hpbt]
+            \centering
+            \begin{tabular}{|l|l|}
+            \hline
+            Contribution 1 & An example of a saliency detector is provided \\
+            \hline
+            Contribution 2 & Global smoothing pooling layer network is provided \\
+            \hline
+            Contribution 3 & A new CRF algorithm is proposed \\
+            \hline
+            \end{tabular}
+            \caption{Contributions of Dr.Wang and his team.}
+            \label{Table1}
+        \end{table}
+    \section{Related Work}
+    \textbf{Fully Supervised Saliency Detection.} Many surveillance algorithms, such as CRF proposed by Liu \emph{et al.}~\cite{[32]}, Random Forest proposed by Jiang \emph{et al.}~\cite{[17]}, have been successfully applied to significant tests.
+    \par
+    \textbf{Weakly Supervised Learning.} Weakly supervised learning has attracted more and more attention, such as object detection proposed by Song \emph{et al.}~\cite{[44]}, semantic segmentation proposed by Pathak \emph{et al.}~\cite{[37]} and boundary detection proposed by Khoreva \emph{et al.}~\cite{[18]}.
+    \par
+    The exploration of weakly supervised learning for significant tests is limited. Dr. Wang and his team were the first to learn significant object detectors using object class labels.
+{\small
+\bibliographystyle{ieee}
+\bibliography{Salient}
+}
+\end{document} 
