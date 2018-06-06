@@ -1,0 +1,70 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{fontspec}
+\usepackage{times}
+\usepackage{url}
+\setmainfont{Times New Roman}
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+\usepackage{float}
+\cvprfinalcopy
+\def\cvprPaperID{****}
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+\setcounter{page}{1}
+\author{Chaonan Song \\\\
+Jun 2, 2018}
+\title{Towards a Quality Metric for Dense Light Fields}
+\begin{document}
+    \maketitle
+    \begin{abstract}
+        Today I read an article by Professor Adhikarla: Towards a quality metric for dense light fields. In this article, Dr. Adhikarla introduced that it is very popular to represent three-dimensional scenes with light fields. The processing of light fields, resampling and compression are very interesting. However, because these operations often lead to quality loss, it is necessary to quantify them. In this work, Dr. Adhikarla collected new datasets with intensive reference and distortion lightfields and corresponding mass scales scaled in perceptual units. This data set contains typical artifacts that appear in the light field processing chain due to light field reconstruction, multi-view compression, and limitations of auto-focus displays. Dr. Adhikarla and his team found that the existing image quality indicators provided a good measure of the quality of the light field but required a dense reference light field for optimum performance. For the more complex task of comparing two distorted light fields, its performance is significantly reduced, and Dr. Adhikarla believes that new specific light field metrics are needed.
+    \end{abstract}
+    \section{Introduction}
+    The light field can be viewed as a generalization of a two-dimensional image, which encodes most of the depth cues and allows the rendering of scenes that simulate any optical system (e.g. , defocus blur) Levoy and Hanrahan~\cite{[16]}. It is a convenient representation of multi-view and light field displays, and an attractive format for capturing high-quality movie content, providing new editing possibilities for post-production Lytro~\cite{[19]}. Due to the huge storage requirements, the light field is usually sparsely sampled in spatial and angular directions, stored using lossy compression, and later reconstructed. It is unclear how the distortions on the road affect the perceived quality. Similar issues have been solved for 2D images, video, and sparse multiview content. Many quality indicators have been designed to predict the perceived differences between different versions of the same content Aydin \emph{et al.}~\cite{[1]}. However, measuring the quality of dense light fields is still a complex task. Dr. Adhikarla focus on light field-specific angle effects such as motion parallax, complex surface appearance, and binocular vision in a free viewing experience. Dr. Adhikarla designed 14 real and synthetic scenes and introduced light field distortions that are specific to light field reconstruction, compression, and display. Dr. Adhikarla then perform paired comparison experiments on the light field pairs and derive a perceptual zoom of the difference between the original and distorted stimuli. Dr. Adhikarla also recommend simply expanding the selected indicators to capture the perceived angle of the light field. Dr. Adhikarla also show that the robustness of these metric predictions decreases when assessing the quality between two distorted light fields. The main contributions of Dr. Adhikarla work are list in Table~\ref{Table1}.
+    \begin{table}[hpbt]
+            \centering
+            \begin{tabular}{|l|l|}
+            \hline
+            Contribution 1 & A publicly available dense light field dataset \\
+            \hline
+            Contribution 2 & A perception experiment \\
+            \hline
+            Contribution 3 & Assessing existing quality indicators \\
+            \hline
+            Contribution 4 & Identified challenges of quality assessment in light fields \\
+            \end{tabular}
+            \caption{Contributions of Dr. Adhikarla and his team.}
+            \label{Table1}
+        \end{table}
+        
+        \begin{figure*}[ht]
+        \begin{center}
+        \includegraphics[width=1\linewidth]{Towards1.jpg}
+        \end{center}
+        \caption{Representative images of all light fields in our collection. Below each image representative EPIs are presented}
+        \label{fig1}
+    \end{figure*}
+    \section{Previous works}
+    Dr. Adhikarla provide an overview of the light field's existing data set and experiments to measure perceptual distortion in various types of content. 
+    \par 
+    \textbf{Light-field datasets:} The most popular are: 4D light field datasets Wanner \emph{et al.}~\cite{[42]} containing 7 synthetic scenes and 5 real world scenes, Stanford archives containing 20 4D light fields, and Disney 3D light field datasets containing 5 scenes Kim \emph{et al.}~\cite{[14]}.
+    \par
+    \textbf{Metrics and experiments:} Due to the proven efficiency of 2D images, 2D target indicators are a viable option for assessing the quality of the light field. Yasakethu \emph{et al.}~\cite{[46]} tested objective measurements - structural similarity (SSIM), peak signal-to-noise ratio (PSNR) and video quality metrics (VQM) for quality assessment of stereo vision and 2D + depth video at different bit rates. 
+    \par
+    \textbf{Light-field displays:} Dr. Adhikarla's work is mainly focused on wide-baseline 3D light fields and can perfectly simulate stereoscopic viewing and continuous horizontal motion parallax, which is crucial for new light field displays.
+    
+    \section{Data collection}
+   Dr. Adhikarla's data set consists of a light field that is parameterized using two parallel planes. Motion parallax is described by a plane and a line parallel to it.
+   \subsection{Scenes}
+   Dr. Adhikarla designed and rendered nine synthetic and captured five real-world scenarios (Figure~\ref{fig1}). They cover a variety of different conditions such as outdoor/indoor, daylight/night, etc. They cover a variety of different conditions such as outdoor/indoor, daylight/night, etc. They also contain objects with a wide range of different appearance characteristics. The depth distribution of scene objects varies greatly to investigate artifacts due to separation and depth discontinuities. In order to capture the real world scene, Dr. Adhikarla used a motorized linear stage with a length of 1 meter, equipped with a Canon EOS 5D Mark II camera and 50mm and 28mm lenses.
+{
+    \small
+    \bibliographystyle{ieee}
+    \bibliography{Towardsbib}
+}
+\end{document}
