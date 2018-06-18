@@ -1,0 +1,67 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{fontspec}
+\usepackage{times}
+\usepackage{url}
+\setmainfont{Times New Roman}
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+\usepackage{float}
+\cvprfinalcopy
+\def\cvprPaperID{****}
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+\setcounter{page}{1}
+\author{Chaonan Song \\\\
+Jun 18, 2018}
+\title{Learning by Asking Questions}
+\begin{document}
+    \maketitle
+        \begin{abstract}
+        Today reads the article Embrided Question Answering by Dr. Abhishek. They propose a new AI task - a specific question answer (EmbodiedQA) - An intermediary generates and asks a question at a random position in the 3D environment ('What colour is the car?'). To answer, the agent must first navigate intelligently to explore the environment, collect the necessary visual information through the first-person visual, and then answer the question ('orange'). EmbassyQA requires a series of AI skills - language understanding, visual recognition, active awareness, goal-driven navigation, common sense reasoning, long-term memory, and language integration. In this work, they developed questions and answers data sets in the House3D environment, evaluation indicators, and hierarchical models trained by imitative and reinforcement learning.
+        \end{abstract}
+        \section{Introduction}
+        Abhishek team's long-term goal is to build smart agents that can sense their environment, communicate, and act. In order to move toward goal-driven agents who can perceive, communicate, and act, Dr. Abhishek present a new AI task-¨C Embodied Question Answering(EmbodiedQA), and problem data sets in the virtual environment, evaluation indicators, and deep reinforcement learning (RL )model. Specifically, Figure~\ref{fig1} shows the task of EmbassyQA - an agent who generates a random position in an environment and asks a question (for example, 'What color is the car?'). Agents perceive their environment through a first-person perspective and can perform some subtle movements (forward, turn, turn, \emph{etc}.). The agent's goal is to intelligently browse the environment and collect the visual information needed to answer questions. EmbodiedQA is a challenging task that contains several basic issues as sub-tasks. Obviously, the agent must understand the language (what is the question?) and the vision (what does the "car" look like?), but it must also learn: \\
+        \textbf{Active Perception:} Agents may be generated anywhere in the environment and may not immediately "see" pixels containing answers to visual questions. Therefore, the agent must successfully control the pixels it perceives. Agents must learn to map their visual input to the correct behavior based on their perception of the world, potential physical limitations, and understanding of the problem. \\
+        \textbf{Commonsense Reasoning:} The agency does not provide a floor plan or an environmental map and must navigate independently from the self-center view. Therefore, it must learn common feelings, similar to how humans drive in unfamiliar houses. \\
+        \textbf{Language Grounding:} A common drawback of modern visual and linguistic models is that they lack a foundation - these models often fail to associate the entities in the text with the corresponding image pixels, but rely on data set deviations, even when they notice unrelated areas. Respond intelligently~\cite{[3],[4]}. In EmbitureQA,Dr. Abhishek took a fundamental, goal-oriented view - our agents based their problem not on a pixel-by-pixel basis but on a series of operations. \\ 
+        \begin{figure}[htbp]
+            \centering
+            % Requires \usepackage{graphicx}
+            \includegraphics[width=0.4\textwidth]{EQA1.jpg}
+            \caption{Embodied Question Answering ¨C EmbodiedQA¨C tasks agents with navigating rich 3D environments in order to answer questions. These agents must jointly learn language understanding, visual reasoning, and goal-driven navigation to succeed.}
+            \label{fig7}
+       \end{figure}
+       \textbf{Contributions.} The contribution of Dr. Abhishek's article is shown in Table~\ref{table1}.
+       \begin{table}
+        \centering
+        \begin{tabular}{|l|l|}
+        % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+        \hline
+        Contribution 1 & Presented a new AI task: EmbodiedQA \\ \hline
+        Contribution 2 & Introduced a hierarchical navigation module \\ \hline
+        Contribution 3 & Use an imitation learning initialization agent \\ \hline
+        Contribution 4 & Evaluating agents in House3D \\ \hline
+        Contribution 5 & Introduced the EQA data set \\ \hline
+        \end{tabular}
+        \caption{Contribution of this paper.}
+        \label{table1}
+        \end{table}
+       \section{Related Work}
+       \textbf{VQA: Vision + Language.} Like Embassy QA, image and video question answering tasks Antol \emph{et al.}~\cite{[10]} need to reason about natural language issues raised by visual content. The key difference is the lack of control - these tasks give the respondent a fixed view of the circumstances in which the agent must answer the question, never allowing the agent to perceive it. Instead, EmbodiedQA agents control their trajectories. \\
+       \textbf{Visual Navigation: Vision + Action.} The long-term research of navigation problems in visual perception-based environments has been conducted in vision and robotics. Classical technology divides navigation into two distinct phases - drawing and planning. The recent deep RL development proposes a fusion architecture that visually observes navigation actions directly from an ego-center Brahmbhatt and Hays~\cite{[21]}. Abhishek team model the agent as a similar pixel to action navigator. The key difference in EmbitureQA is how to set goals. Embodying QA's goal of assigning agents through language is inherently combinative and provides different strategies for each task (problem). \\
+       \textbf{Situated Language Learning: Language + Action.} Inspired by Winograd's classic work, some of the recent works assign tasks to agents by placing them in a simple, globally aware environment and assigning them to natural language-specific goals. Of course, one of the key differences in EmbitureQA is that the visual perception - the environment can only be partially observed, that the agent can not access the floor plan, object tags, attributes, etc., and must be purely from the first person visual sense.
+       \textbf{Embodiment: Vision + Language + Action. EmbassyQA} The closest work is to extend the paradigm of language learning in place to the perception that agents' perceptions are local, purely visual, and change based on their behavior - Abhishek team call it embodied language learning. In contrast, our Embodied QA environment consists of multi-room dwellings (¡°8 per household¡±), which are densely populated with various objects (54 unique objects per house). \\
+       \textbf{Interactive Environments.} There are many common interactive environments in the community, ranging from simple 2D grid worlds to 3D game-like environments with limited realism (\emph{eg}, Doom~\cite{[16]}). In this work, Abhishek team use the House3D environment because it achieves a useful middle ground between being realistic enough and providing a large number of different room layouts and object class sets. \\
+       \textbf{Hierarchical Agents.} Abhishek team modeled our EmbodiedQA agent as a deep-seated network, decomposing the overall control problem so that higher-level planners call lower-level controls to issue primitive operations. Their model is also inspired by Graves's work on adaptive computing time.
+
+{
+\small
+\bibliographystyle{ieee}
+\bibliography{eQA}
+}
+\end{document}
